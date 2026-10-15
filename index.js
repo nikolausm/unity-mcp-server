@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { Tool } from '@modelcontextprotocol/sdk/types.js';
+import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import fs from 'fs-extra';
@@ -154,14 +154,12 @@ class UnityMCPServer {
     ];
 
     // Registriere alle Tools
-    tools.forEach(tool => {
-      this.server.setRequestHandler(`tools/list`, async () => {
-        return { tools };
-      });
+    this.server.setRequestHandler(ListToolsRequestSchema, async () => {
+      return { tools };
     });
 
     // Handler für Tool-Aufrufe
-    this.server.setRequestHandler(`tools/call`, async (request) => {
+    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const { name, arguments: args } = request.params;
       
       switch (name) {
