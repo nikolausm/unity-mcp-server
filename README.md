@@ -47,6 +47,12 @@ Nach der Installation kannst du die Unity-Tools in Claude verwenden:
 - Mindestens eine Unity-Version installiert
 - macOS (für andere Plattformen müssen Pfade angepasst werden)
 
+## Tests
+
+`npm ci --ignore-scripts` und `npm test` prüfen die MCP-Verbindung und alle sechs Tools offline. Tests verwenden temporäre Projektdateien und fangen Unity-/Hub-Programmstarts ab; eine Unity-Installation ist dafür nicht nötig. Echte Editor- und Build-Vorgänge müssen zusätzlich auf macOS geprüft werden.
+
+CI führt diese Tests und `npm audit --audit-level=moderate` unter Node 20 und 24 aus.
+
 ## Author
 
 Michael Nikolaus (Minicon eG)

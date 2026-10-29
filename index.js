@@ -2,13 +2,13 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 import fs from 'fs-extra';
 import path from 'path';
 import os from 'os';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 // Unity Hub und Editor Pfade (macOS)
 const UNITY_HUB_PATH = '/Applications/Unity Hub.app/Contents/MacOS/Unity Hub';
@@ -239,10 +239,10 @@ class UnityMCPServer {
     const fullProjectPath = path.join(projectPath, projectName);
     
     // Create project using Unity command line
-    const cmd = `"${unityPath}" -createProject "${fullProjectPath}" -template "${template}" -quit -batchmode`;
+    const commandArgs = ['-createProject', fullProjectPath, '-template', template, '-quit', '-batchmode'];
     
     try {
-      const { stdout, stderr } = await execAsync(cmd);
+      await execFileAsync(unityPath, commandArgs);
       
       return {
         content: [
@@ -271,10 +271,10 @@ class UnityMCPServer {
     }
     
     // Open with Unity Hub
-    const cmd = `open -a "Unity Hub" --args -projectPath "${projectPath}"`;
+    const commandArgs = ['-a', 'Unity Hub', '--args', '-projectPath', projectPath];
     
     try {
-      await execAsync(cmd);
+      await execFileAsync('open', commandArgs);
       
       return {
         content: [
@@ -405,10 +405,10 @@ MonoImporter:
     const unityPath = await this.getUnityExecutablePath();
     
     // Build command
-    const cmd = `"${unityPath}" -batchmode -quit -projectPath "${projectPath}" -buildTarget ${buildTarget} -buildPath "${outputPath}"`;
+    const commandArgs = ['-batchmode', '-quit', '-projectPath', projectPath, '-buildTarget', buildTarget, '-buildPath', outputPath];
     
     try {
-      const { stdout, stderr } = await execAsync(cmd, { maxBuffer: 1024 * 1024 * 10 });
+      await execFileAsync(unityPath, commandArgs, { maxBuffer: 1024 * 1024 * 10 });
       
       return {
         content: [
